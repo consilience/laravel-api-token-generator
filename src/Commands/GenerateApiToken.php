@@ -3,7 +3,6 @@
 
 namespace Consilience\ApiTokenGenerator\Commands;
 
-use App\User;
 use Illuminate\Console\Command;
 use Str;
 use Log;
@@ -22,8 +21,8 @@ class GenerateApiToken extends Command
 
     public function __construct()
     {
-        $this->model = config('apitokens.model') ?? User::class;
-        $this->field = config('apitokens.field') ?? 'name';
+        $this->model = config('apitokens.model');
+        $this->field = config('apitokens.field');
 
         parent::__construct();
     }
