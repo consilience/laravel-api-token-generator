@@ -32,6 +32,11 @@ class GenerateApiToken extends Command
         $model = $this->model;
         $field = $this->field;
 
+        if (!$model || !$field) {
+            $this->log("Missing definitions for model or field. Please check your config/apitokens.php");
+            return -1;
+        }
+
         $id = $this->option('id');
         $value = $this->option('value');
 
