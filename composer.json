@@ -1,0 +1,25 @@
+{
+    "name": "consilience/laravel-api-token-generator",
+    "description": "API Token Generation for Laravel applications",
+    "type": "library",
+    "require": {},
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "stokoe",
+            "email": "mstokoe0990@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Consilience\\ApiTokenGenerator\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Consilience\\ApiTokenGenerator\\ApiTokenGeneratorServiceProvider"
+            ]
+        }
+    }
+}
