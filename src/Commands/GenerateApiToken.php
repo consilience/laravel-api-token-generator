@@ -10,7 +10,11 @@ use Log;
 
 class GenerateApiToken extends Command
 {
-    protected $signature = "apitoken:generate {string-or-id}";
+    protected $signature = "apitoken:generate
+    {--id= : Unique ID of model to generate an API token for.}
+    {--value= : A field(defined in configuration) value to search for.}
+    ";
+
     protected $description = "Generate an API token for a user";
 
     protected $model;
@@ -29,17 +33,13 @@ class GenerateApiToken extends Command
         $model = $this->model;
         $field = $this->field;
 
-        $stringOrId = $this->argument('string-or-id');
+        $id = $this->option('id');
+        $value = $this->option('value');
 
-        if (empty($stringOrId)) {
-            $this->log("$field or ID must be supplied");
-            return -1;
-        }
-
-        if (is_numeric($stringOrId)) {
-            $record = $model::find($stringOrId);
+        if ($id !== null) {
+            $record = $model::find($id);
         } else {
-            $record = $model::where($field, $stringOrId)->first();
+            $record = $model::where($field, $value)->first();
         }
 
         if (! $record) {
