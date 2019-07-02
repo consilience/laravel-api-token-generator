@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ApiTokenGeneratorServiceProvider extends BaseServiceProvider
 {
+    // Define an array of command classes to register.
     protected $commands = [
         GenerateApiToken::class
     ];
@@ -22,6 +23,7 @@ class ApiTokenGeneratorServiceProvider extends BaseServiceProvider
 
     public function register()
     {
+        // Register any commands.
         $this->commands($this->commands);
     }
 }
