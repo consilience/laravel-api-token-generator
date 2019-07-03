@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5074fb54-b5e6-4765-b083-caedbf274e91" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/laravel-api-token-generator.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/apitokens.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/apitokens.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ApiTokenGeneratorServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/ApiTokenGeneratorServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Commands/GenerateApiToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Commands/GenerateApiToken.php" afterDir="false" />
-    </list>
+    <list default="true" id="5074fb54-b5e6-4765-b083-caedbf274e91" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,12 +101,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1562055835098</updated>
-      <workItem from="1562055836372" duration="1013000" />
+      <workItem from="1562055836372" duration="1589000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1013000" />
+    <option name="totallyTimeSpent" value="1589000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1280" y="30" width="1284" height="1506" extended-state="4" />
