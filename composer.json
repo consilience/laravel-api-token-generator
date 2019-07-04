@@ -1,6 +1,6 @@
 {
     "name": "consilience/laravel-api-token-generator",
-    "description": "Artisan API token generation for laravel applications",
+    "description": "Artisan command to generate API tokens for laravel applications",
     "type": "library",
     "require": {},
     "license": "MIT",
