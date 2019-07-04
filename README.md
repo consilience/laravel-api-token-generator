@@ -57,16 +57,15 @@ The token column will be `api_token` by default, but can be changed:
 Set a new token or replace the existing token for a user:
 
     php artisan apitoken:generate --id=123
+    php artisan apitoken:generate --id=5fd40c23-fcda-4bdc-a07c-f2bfeb56bb03
 
 The `id` is normally an integer, but some this should also work if the `id` is a string such as UUID.
 
 The token will only be displayed once.
 It is encrypted for saving against the model, so cannot be recovered if not recorded immediately.
 
-#### Model Name Search:
-
 Where users are uniquely identified by another column,
-that can be specified to identify the model instance to update:
+then that column can be used to identify the model instance to update with a new token:
 
     php artisan apitoken:generate --name=bloggs@example.com
 
