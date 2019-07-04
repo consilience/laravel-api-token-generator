@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Consilience\ApiTokenGenerator;
 
 use Consilience\ApiTokenGenerator\Commands\GenerateApiToken;
