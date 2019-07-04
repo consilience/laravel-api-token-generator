@@ -1,77 +1,94 @@
 <?php
 
-namespace Consilience\ApiTokenGenerator\Commands;
+namespace Consilience\Laravel\ApiTokenGenerator\Commands;
 
 use Illuminate\Console\Command;
-use Str;
-use Log;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class GenerateApiToken extends Command
 {
     protected $signature = "apitoken:generate
-    {--id= : Unique ID of model to generate an API token for.}
-    {--value= : A field(defined in configuration) value to search for.}
+        {--id= : Unique ID of model to generate an API token for.}
+        {--name= : Unique name of model to generate an API token for.}
     ";
 
-    protected $description = "Generate an API token for a given model";
+    protected $description = "Generate an API token for a user";
 
     protected $model;
-    protected $field;
-
-    public function __construct()
-    {
-        $this->model = config('apitokens.model');
-        $this->field = config('apitokens.field');
-
-        parent::__construct();
-    }
+    protected $nameField;
 
     public function handle()
     {
-        $model = $this->model;
-        $field = $this->field;
+        $model = config('apitokens.model', \App\User::class);
+        $nameField = config('apitokens.name_field');
+        $tokenField = config('apitokens.token_field');
 
-        // If neither is set by config or otherwise, we need to error out here.
-        if (!$model || !$field) {
-            $this->log("Missing definitions for model or field. Please check your config/apitokens.php");
-            return -1;
-        }
-
-        // Grab $id and $value from input.
         $id = $this->option('id');
-        $value = $this->option('value');
+        $name = $this->option('name');
 
         if ($id !== null) {
-            // If given an ID, find the record via that ID.
+            // If given an ID, find the record using that ID.
+
             $record = $model::find($id);
-        } else {
-            // Otherwise search the named field using the value given.
-            $record = $model::where($field, $value)->first();
+
+            if (! $record) {
+                $this->error(sprintf(
+                    'No %s found with ID %s',
+                    $model,
+                    $id
+                ));
+
+                return -1;
+            }
         }
 
-        // If we can't find any records, quit.
-        if (! $record) {
-            $this->log("No model matching this $field or ID");
+        if (empty($record) && $name !== null) {
+            // Otherwise search the named field using its name.
+
+            $record = $model::where($nameField, '=', $name)->first();
+
+            if (! $record) {
+                $this->error(sprintf(
+                    'No %s found with %s "%s"',
+                    $model,
+                    $nameField,
+                    $name
+                ));
+
+                return -1;
+            }
+        }
+
+        // No records found.
+
+        if (empty($record)) {
+            $this->error('No model matching this $fieldName or ID');
             return -1;
         }
 
         // Generate an API token.
-        $token = $this->generateApiToken();
 
-        // Store it against the record.
+        $token = $token = Str::random(60);
+
+        // Store the encryoted token against the record.
+
         try {
-            $record->api_token = $token;
+            $record->{$tokenField} = hash('sha256', $token);
             $record->save();
         } catch (\Exception $e) {
-            $this->log('Error saving to api_token column on $model record.');
+            $this->error(sprintf(
+                'Error saving to %s column on %s record (ID %s).',
+                $tokenField,
+                $model,
+                (string)$record->id
+            ));
         }
 
         $this->log(sprintf(
-            'New API token generated for %s.%s "%s" (ID %s):\n%s',
+            "API token generated for %s (ID %s). Please note this token:\n%s",
             $model,
-            $field,
-            $record->{$field}
-            $record->id,
+            (string)$record->id,
             $token
         ));
     }
@@ -79,6 +96,7 @@ class GenerateApiToken extends Command
     public function log(string $message)
     {
         // Function outputs to logs as well as to console.
+
         Log::info($message);
         $this->info($message);
 

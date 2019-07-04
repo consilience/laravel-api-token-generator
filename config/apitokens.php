@@ -3,12 +3,14 @@
 return [
     // Changes behaviour of console command.
     // this tells the command which model to create the token against.
-    
+
     'model' => \App\User::class,
 
-    // Field: Here's the field on the model in which you search with the `--value=` option.
-    // Example: 'field' => 'email'
+    // A field that uniquely identifies the model instance, alternative to
+    // the model ID.
     // `php artisan apitoken:generate --value="example@app.com"
-    
-    'field' => 'api_token'
+
+    'name_field' => 'email_address',
+
+    'token_field' => 'api_token',
 ];

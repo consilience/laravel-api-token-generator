@@ -16,31 +16,57 @@ That is left to your application.
 
 `composer require consilience/laravel-api-token-generator`
 
+### Lumen
+
+For Laravel, the service provider and configuration file are registered automatically.
+With Lumen, additional entried are needed in `bootstrap/app.php`.
+
+The service provider is registered:
+
+    $app->register(Consilience\Laravel\ApiTokenGenerator\Providers\ServiceProvider::class);
+
+If the configuration file is published, add:
+
+    $app->configure('apitokens');
+
+then copy `apitokens.php`:
+
+    cp vender/consilience/laravel-api-token-generator/apitokens.php config/apitokens.php
+
 ### Publishing assets:
 
 `php artisan vendor:publish --provider="Consilience\ApiTokenGenerator\ApiTokenGeneratorServiceProvider"`
 
 ### Configuration
 
-You can change the model you wish to use to generate API Tokens for.
-Just make sure the model has a _String_ column named by default `api_token`.
-You can change the field name you wish to use for searching. eg. Email address.
+You can change the model that will hold the API tokens.
+By default this will be `App\User`, but yu may want `App\Models\User` for example.
 
-    'model' => \App\User::class,
-    'field' => 'name'
-    
+    'model' => App\Models\User::class,
+
+The `name_field` is an alternative column to `id` that can be used to uniquely identify a model instance:
+
+    'name_field' => 'name'
+
+The token column will be `api_token` by default, but can be changed:
+
+    'token_field' => 'my_api_token_column',
+
 ### Usage
 
-Once you have defined the model and field you wish to use, simply run the artisan command included.
+Set a new token or replace the existing token for a user:
 
-#### Model ID:
+    php artisan apitoken:generate --id=123
 
-`php artisan apitoken:generate --id={$x}`
+The `id` is normally an integer, but some this should also work if the `id` is a string such as UUID.
 
-eg `php artisan apitoken:generate --id=31`
+The token will only be displayed once.
+It is encrypted for saving against the model, so cannot be recovered if not recorded immediately.
 
 #### Model Name Search:
 
-`php artisan apitoken:generate --value={$y}`
+Where users are uniquely identified by another column,
+that can be specified to identify the model instance to update:
 
-eg `php artisan apitoken:generate --value="Joe Bloggs"`
+    php artisan apitoken:generate --name=bloggs@example.com
+
