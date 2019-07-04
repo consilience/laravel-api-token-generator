@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Consilience\ApiTokenGenerator\Commands;
 
 use Illuminate\Console\Command;
@@ -64,10 +63,17 @@ class GenerateApiToken extends Command
             $record->api_token = $token;
             $record->save();
         } catch (\Exception $e) {
-            $this->log("Error saving to api_token column on $model record.");
+            $this->log('Error saving to api_token column on $model record.');
         }
 
-        $this->log("New API token generated for $model $field '$record->{$field}' (ID $record->id):\n$token",);
+        $this->log(sprintf(
+            'New API token generated for %s.%s "%s" (ID %s):\n%s',
+            $model,
+            $field,
+            $record->{$field}
+            $record->id,
+            $token
+        ));
     }
 
     public function log(string $message)
