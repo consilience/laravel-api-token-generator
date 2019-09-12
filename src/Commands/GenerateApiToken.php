@@ -2,8 +2,8 @@
 
 namespace Consilience\Laravel\ApiTokenGenerator\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class GenerateApiToken extends Command
@@ -32,7 +32,7 @@ class GenerateApiToken extends Command
 
             $record = $model::find($id);
 
-            if (! $record) {
+            if (!$record) {
                 $this->error(sprintf(
                     'No %s found with ID %s',
                     $model,
@@ -48,7 +48,7 @@ class GenerateApiToken extends Command
 
             $record = $model::where($nameField, '=', $name)->first();
 
-            if (! $record) {
+            if (!$record) {
                 $this->error(sprintf(
                     'No %s found with %s "%s"',
                     $model,
@@ -81,26 +81,19 @@ class GenerateApiToken extends Command
                 'Error saving to %s column on %s record (ID %s).',
                 $tokenField,
                 $model,
-                (string)$record->id
+                (string) $record->id
             ));
         }
 
-        $this->log(sprintf(
-            "API token generated for %s (ID %s). Please note this token:\n%s",
+        $this->info(sprintf(
+            "API token generated for %s (ID %s). Please note this token:",
             $model,
-            (string)$record->id,
-            $token
+            (string) $record->id
         ));
-    }
 
-    public function log(string $message)
-    {
-        // Function outputs to logs as well as to console.
-
-        Log::info($message);
-        $this->info($message);
-
-        return;
+        $this->info(
+            $token
+        );
     }
 
     public function generateApiToken()
