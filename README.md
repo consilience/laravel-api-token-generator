@@ -78,3 +78,11 @@ Use the `--token=` option to do this instead of the `--generate` option.
     php artisan apitoken:generate --id=123 --token=d8a928b2043db77e340b523547bf16cb4aa483f0645fe0a290ed1f20aab76257
 
 If using for automated deployment, you may want to use the `--no-ansi` option to remove control characters.
+
+The `--check` option will tell you whether an instance has a token set or not:
+
+```bash
+$ php artisan apitoken:generate --id=11 --check
+App\Models\User::11 has no API token set
+No explicit token supplied (--token=) and no token to be generated (--generate)
+```
