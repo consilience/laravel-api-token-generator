@@ -5,15 +5,19 @@ namespace Consilience\Laravel\ApiTokenGenerator\Commands;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Exception;
 
 class GenerateApiToken extends Command
 {
     protected $signature = "apitoken:generate
-        {--id= : Unique ID of model to generate an API token for.}
-        {--name= : Unique name of model to generate an API token for.}
+        {--id= : ID of model instance}
+        {--name= : Name of model instance}
+        {--token= : Set a specific token}
+        {--generate : Generate a random token}
+        {--check : Check if a model instance has an API token set}
     ";
 
-    protected $description = "Generate an API token for a user";
+    protected $description = "Generate an API token for a user or other eloquent model";
 
     protected $model;
     protected $nameField;
@@ -26,29 +30,49 @@ class GenerateApiToken extends Command
 
         $id = $this->option('id');
         $name = $this->option('name');
+        $token = $this->option('token');
+        $generate = $this->option('generate');
+        $check = $this->option('check');
 
-        if ($id !== null) {
+        if (empty($id) && empty($name)) {
+                $this->error(sprintf(
+                    'Either the --name or the --id option must be supplied.',
+                    $model,
+                    $id
+                ));
+
+                $this->info(sprintf(
+                    'Token to be created on %s::%s identified by "id" or "%s"',
+                    $model,
+                    $tokenField,
+                    $nameField
+                ));
+
+                return 1;
+        }
+
+        if (! empty($id)) {
             // If given an ID, find the record using that ID.
 
             $record = $model::find($id);
 
-            if (!$record) {
+            if ($record === null) {
                 $this->error(sprintf(
                     'No %s found with ID %s',
                     $model,
                     $id
                 ));
 
-                return -1;
+                return 1;
             }
         }
 
         if (empty($record) && $name !== null) {
-            // Otherwise search the named field using its name.
+            // Otherwise search the model using its name.
 
             $record = $model::where($nameField, '=', $name)->first();
 
-            if (!$record) {
+            if ($record === null) {
                 $this->error(sprintf(
                     'No %s found with %s "%s"',
                     $model,
@@ -56,52 +80,73 @@ class GenerateApiToken extends Command
                     $name
                 ));
 
-                return -1;
+                return 1;
             }
         }
 
-        // No records found.
+        // We will have found a record if we get to here.
 
-        if (empty($record)) {
-            $this->error('No model matching this $fieldName or ID');
-            return -1;
+        if ($check) {
+            if (! empty($record->{$tokenField})) {
+                $this->info(sprintf(
+                    '%s::%s has an API token set',
+                    $model,
+                    $record->id
+                ));
+            } else {
+                $this->info(sprintf(
+                    '%s::%s has no API token set',
+                    $model,
+                    $record->id
+                ));
+            }
         }
 
-        // Generate an API token.
+        if (empty($generate) && empty($token)) {
+            $this->info('No explicit token supplied (--token=) and no token to be generated (--generate)');
+            exit;
+        }
 
-        $token = $token = Str::random(60);
+        // Generate an API token if requested.
 
-        // Store the encryoted token against the record.
-
-        try {
-            $record->{$tokenField} = hash('sha256', $token);
-            $record->save();
-        } catch (\Exception $e) {
-            $this->error(sprintf(
-                'Error saving to %s column on %s record (ID %s).',
-                $tokenField,
+        if (empty($token) && $generate) {
+            $this->info(sprintf(
+                "API token generated for %s::id %s; this token will be shown once only:",
                 $model,
                 (string) $record->id
             ));
+
+            $newToken = Str::random(60);
+        } else {
+            $this->info(sprintf(
+                "API token to be set for %s (ID %s):",
+                $model,
+                (string) $record->id
+            ));
+
+            $newToken = $token;
         }
 
-        $this->info(sprintf(
-            "API token generated for %s (ID %s). Please note this token:",
-            $model,
-            (string) $record->id
-        ));
+        if ($newToken) {
+            // Store the encrypted token against the record.
 
-        $this->info(
-            $token
-        );
-    }
+            try {
+                $record->{$tokenField} = hash('sha256', $newToken);
+                $record->save();
+            } catch (Exception $e) {
+                $this->error(sprintf(
+                    'Error setting %s::%s for ID %s; maybe a duplicate token',
+                    $model,
+                    $tokenField,
+                    (string) $record->id
+                ));
 
-    public function generateApiToken()
-    {
-        // Generate a random 60-character string.
-        $token = Str::random(60);
+                $Log->error($e);
+            }
 
-        // Return a hash of that string to be used as the token.
-        return hash('sha256', $token);
+            $this->info(
+                $newToken
+            );
+        }
     }
 }
