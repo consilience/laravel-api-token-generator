@@ -141,7 +141,7 @@ class GenerateApiToken extends Command
                     (string) $record->id
                 ));
 
-                $Log->error($e);
+                Log::error($e);
             }
 
             $this->info(
